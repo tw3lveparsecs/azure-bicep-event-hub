@@ -26,6 +26,9 @@ param disableLocalAuth bool = false
 @description('Enable auto inflate for the Event Hubs namespace')
 param enableAutoInflate bool = false
 
+@description('Upper limit of throughput units when AutoInflate is enabled, value should be within 0 to 20 throughput units.')
+param maximumThroughputUnits int = 0
+
 @description('Enable kafka for the Event Hubs namespace')
 param enablekafka bool = false
 
@@ -120,7 +123,7 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2021-11-01' = {
   }
   properties: {
     isAutoInflateEnabled: enableAutoInflate
-    maximumThroughputUnits: 0
+    maximumThroughputUnits: maximumThroughputUnits
     disableLocalAuth: disableLocalAuth
     zoneRedundant: zoneRedundant
     kafkaEnabled: enablekafka
