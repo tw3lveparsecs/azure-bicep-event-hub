@@ -79,6 +79,15 @@ param networkRuleSet object = {}
 })
 param eventHubs array = []
 
+@description('Authorisation rules associated with the Event Hub namespace.')
+@metadata({
+  name: 'Name of the authorisation rule.'
+  rights: [
+    'Rights associated with the authorisation rule. Accepted values: Send, Listen, Manage.'
+  ]
+})
+param eventHubNamespaceAuthRules array = []
+
 @allowed([
   'CanNotDelete'
   'NotSpecified'
@@ -129,6 +138,14 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2021-11-01' = {
     kafkaEnabled: enablekafka
   }
 }
+
+resource eventHubNamespaceAuthorisationRules 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' = [for rule in eventHubNamespaceAuthRules: {
+  name: rule.name
+  parent: eventHubNamespace
+  properties: {
+    rights: rule.rights
+  }
+}]
 
 resource eventHubNamespaceNetworkRuleSet 'Microsoft.EventHub/namespaces/networkRuleSets@2021-11-01' = if (!empty(networkRuleSet)) {
   parent: eventHubNamespace
